@@ -3,6 +3,8 @@ use std::cmp::min;
 
 const ARENA_HEIGHT: u32 = 10;
 const ARENA_WIDTH: u32 = 10;
+const GLOBAL_PADDING: u32 = 100;
+const SQUARE_SCALE: f32 = 0.6;
 
 #[derive(Default, Copy, Clone, Eq, PartialEq, Hash)]
 struct Position {
@@ -61,7 +63,7 @@ fn spawn_character(mut commands: Commands, mut materials: Res<Materials>) {
         })
         .insert(Character)
         .insert(Position { x: 0, y: 0 })
-        .insert(Size::square(0.8));
+        .insert(Size::square(SQUARE_SCALE));
 
     //
     commands
@@ -72,7 +74,7 @@ fn spawn_character(mut commands: Commands, mut materials: Res<Materials>) {
         })
         .insert(Character)
         .insert(Position { x: 9, y: 9 })
-        .insert(Size::square(0.8));
+        .insert(Size::square(SQUARE_SCALE));
 
     //
     commands
@@ -83,7 +85,7 @@ fn spawn_character(mut commands: Commands, mut materials: Res<Materials>) {
         })
         .insert(Character)
         .insert(Position { x: 0, y: 2 })
-        .insert(Size::square(0.8));
+        .insert(Size::square(SQUARE_SCALE));
 
     commands
         .spawn_bundle(SpriteBundle {
@@ -92,8 +94,8 @@ fn spawn_character(mut commands: Commands, mut materials: Res<Materials>) {
             ..Default::default()
         })
         .insert(Character)
-        .insert(Position { x: 2, y: 0 })
-        .insert(Size::square(0.8));
+        .insert(Position { x: 1, y: 0 })
+        .insert(Size::square(SQUARE_SCALE));
 }
 
 fn size_scaling(windows: Res<Windows>, mut q: Query<(&Size, &mut Sprite)>) {
@@ -113,8 +115,9 @@ fn position_translation(windows: Res<Windows>, mut q: Query<(&Position, &mut Tra
         let tile_size = bound_window / bound_game;
         pos / bound_game * bound_window - (bound_window / 2.) + (tile_size / 2.)
     }
+
     let window = windows.get_primary().unwrap();
-    let target_size = window.width().min(window.height());
+    let target_size = window.width().min(window.height()) - GLOBAL_PADDING as f32;
     for (pos, mut transform) in q.iter_mut() {
         transform.translation = Vec3::new(
             convert(pos.x as f32, target_size as f32, ARENA_WIDTH as f32),
@@ -154,7 +157,7 @@ fn setup(
             "Bevy Rougelike",
             TextStyle {
                 font: asset_server.load("fonts/mononoki-Regular.ttf"),
-                font_size: 100.0,
+                font_size: 50.0,
                 color: Color::WHITE,
             },
             // Note: You can use `Default::default()` in place of the `TextAlignment`
@@ -189,7 +192,7 @@ fn setup(
             "This text is in the 2D scene.",
             TextStyle {
                 font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                font_size: 60.0,
+                font_size: 30.0,
                 color: Color::WHITE,
             },
             TextAlignment {

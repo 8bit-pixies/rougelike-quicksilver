@@ -225,3 +225,5 @@ fn spawn_character(mut commands: Commands, mut materials: Res<Materials>) {
 
 We'll create a grid; in order to enforce something to be square we use: `let target_size = window.width().min(window.height());`.
 
+**Moving Things Around**
+
